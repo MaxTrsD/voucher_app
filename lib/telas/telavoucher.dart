@@ -22,7 +22,7 @@ class _TelaVoucherState extends State<TelaVoucher> {
         backgroundColor: Color.fromARGB(255, 255, 213, 4),
         title: Center(
           child: const Text(
-            'Voucher',
+            'Vocher',
             style: TextStyle(color: Colors.white),
           ),
         ),
