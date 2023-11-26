@@ -26,14 +26,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _globalKey = GlobalKey();
 
-  String nomesDeClientes = '';
-  String tipoDePasseio = '';
-  String dataDePasseio = '';
-  String dataDeEmissao = '';
-  String referentePasseio = '';
-  String valorPago = '';
-  String valorAReceber = '';
-  String valorTotal = '';
+  String nomesDeClientes = ''; //Feito
+  String tipoDePasseio = ''; //Feito
+  String dataDePasseio = ''; //Feito
+  String dataDeEmissao = ''; //Feito
+  String referentePasseio = ''; //Feito
+  String valorPago = ''; //Feito
+  String valorAReceber = ''; //Feito
+  String valorTotal = ''; //Feito
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +84,24 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: const ui.Color.fromARGB(255, 0, 0, 0)),
                         ),
                       ),
+                      Positioned(
+                        top: 90,
+                        left: 300,
+                        child: Text(
+                          valorAReceber,
+                          style: TextStyle(
+                              color: const ui.Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                      ),
+                      Positioned(
+                        top: 90,
+                        left: 40,
+                        child: Text(
+                          valorTotal,
+                          style: TextStyle(
+                              color: const ui.Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -102,11 +120,63 @@ class _MyHomePageState extends State<MyHomePage> {
               TextField(
                 onChanged: (value) {
                   setState(() {
+                    referentePasseio = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Referente'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    tipoDePasseio = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Tipo de passeio'),
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    valorTotal = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Valor total'),
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    valorAReceber = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Valor a receber'),
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
                     valorPago = value;
                   });
                 },
-                decoration:
-                    InputDecoration(labelText: 'Informações de Pagamento'),
+                decoration: InputDecoration(labelText: 'Valor pago'),
+              ),
+              TextField(
+                keyboardType: TextInputType.datetime,
+                onChanged: (value) {
+                  setState(() {
+                    dataDeEmissao = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Data de emissão'),
+              ),
+              TextField(
+                keyboardType: TextInputType.datetime,
+                onChanged: (value) {
+                  setState(() {
+                    dataDePasseio = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Data de passeio'),
               ),
               SizedBox(height: 20),
               Container(
@@ -126,6 +196,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 100,
+              )
             ],
           ),
         ),
