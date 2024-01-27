@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -15,11 +16,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _globalKey = GlobalKey();
 
   String nomesDeClientes = '';
+  String qtdInt = '0';
+  String qtdMeia = '0';
+  String qtdFree = '0';
   String nDeRecibo = '';
   String tipoDePasseio = '';
   String dataDePasseio = '';
   String dataDeEmissao = '';
-  String referentePasseio = '';
   String valorPago = '';
   String valorAReceber = '';
   String valorTotal = '';
@@ -32,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       tipoDePasseio = tipoDePasseio;
     }
+
     if (dataDePasseio == '' || dataDePasseio.isEmpty) {
       dataDePasseio = '(Data)';
     } else {
@@ -42,17 +46,50 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       nDeRecibo = nDeRecibo;
     }
+    if (valorTotal == '' || valorTotal.isEmpty) {
+      valorTotal = '0,00';
+    } else {
+      valorTotal = valorTotal;
+    }
+    if (valorPago == '' || valorPago.isEmpty) {
+      valorPago = '0,00';
+    } else {
+      valorPago = valorPago;
+    }
+    if (valorAReceber == '' || valorAReceber.isEmpty) {
+      valorAReceber = '0,00';
+    } else {
+      valorAReceber = valorAReceber;
+    }
+    if (qtdInt == '' || qtdInt.isEmpty) {
+      qtdInt = '0';
+    } else {
+      qtdInt = qtdInt;
+    }
+    if (qtdMeia == '' || qtdMeia.isEmpty) {
+      qtdMeia = '0';
+    } else {
+      qtdMeia = qtdMeia;
+    }
+    if (qtdFree == '' || qtdFree.isEmpty) {
+      qtdFree = '0';
+    } else {
+      qtdFree = qtdFree;
+    }
+
+    String valorTt = ' R\$$valorTotal';
+    String valorAR = ' R\$$valorAReceber';
+    String valorPg = ' R\$$valorPago';
+    String referentePasseio = tipoDePasseio;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.orangeAccent,
-        title: Center(
-          child: Text(
-            'Voucher',
-            style: TextStyle(color: Colors.white),
-          ),
+        title: Text(
+          'Voucher',
+          style: TextStyle(color: Colors.white, fontFamily: 'NormalFont'),
         ),
       ),
       body: Scrollbar(
@@ -85,6 +122,28 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
+                        top: 150,
+                        left: 30,
+                        child: Text(
+                          dataDeEmissao,
+                          style: TextStyle(
+                              color: ui.Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 9,
+                              fontFamily: 'NormalFont'),
+                        ),
+                      ),
+                      Positioned(
+                        top: 119,
+                        left: 150,
+                        child: Text(
+                          'Paraty, $dataDeEmissao.',
+                          style: TextStyle(
+                              color: ui.Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 8,
+                              fontFamily: 'NormalFont'),
+                        ),
+                      ),
+                      Positioned(
                         top: 85,
                         left: 120,
                         child: Text(
@@ -107,33 +166,80 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 90,
-                        left: 300,
+                        top: 15,
+                        left: 20,
                         child: Text(
-                          valorPago,
+                          valorTt,
                           style: TextStyle(
-                              color:
-                                  const ui.Color.fromARGB(255, 95, 130, 164)),
+                              color: ui.Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 9,
+                              fontFamily: 'NormalFont'),
                         ),
                       ),
                       Positioned(
-                        top: 90,
-                        left: 300,
+                        top: 41.3,
+                        left: 16,
                         child: Text(
-                          valorAReceber,
+                          qtdInt,
                           style: TextStyle(
-                              color:
-                                  const ui.Color.fromARGB(255, 95, 130, 164)),
+                              color: ui.Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 9,
+                              fontFamily: 'NormalFont'),
                         ),
                       ),
                       Positioned(
-                        top: 90,
-                        left: 40,
+                        top: 51.2,
+                        left: 16,
                         child: Text(
-                          valorTotal,
+                          qtdMeia,
                           style: TextStyle(
-                              color:
-                                  const ui.Color.fromARGB(255, 95, 130, 164)),
+                              color: ui.Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 9,
+                              fontFamily: 'NormalFont'),
+                        ),
+                      ),
+                      Positioned(
+                        top: 61.5,
+                        left: 16,
+                        child: Text(
+                          qtdFree,
+                          style: TextStyle(
+                              color: ui.Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 9,
+                              fontFamily: 'NormalFont'),
+                        ),
+                      ),
+                      Positioned(
+                        top: 105,
+                        left: 15,
+                        child: Text(
+                          tipoDePasseio,
+                          style: TextStyle(
+                              color: ui.Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 9,
+                              fontFamily: 'NormalFont'),
+                        ),
+                      ),
+                      Positioned(
+                        top: 22,
+                        left: 330,
+                        child: Text(
+                          valorAR,
+                          style: TextStyle(
+                              color: const ui.Color.fromARGB(255, 95, 130, 164),
+                              fontSize: 9,
+                              fontFamily: 'BoldFont'),
+                        ),
+                      ),
+                      Positioned(
+                        top: 9.5,
+                        left: 330,
+                        child: Text(
+                          valorPg,
+                          style: TextStyle(
+                              color: const ui.Color.fromARGB(255, 95, 130, 164),
+                              fontSize: 9,
+                              fontFamily: 'BoldFont'),
                         ),
                       ),
                     ],
@@ -152,6 +258,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: InputDecoration(labelText: 'Recibo'),
               ),
               TextField(
+                keyboardType: TextInputType.datetime,
+                onChanged: (value) {
+                  setState(() {
+                    dataDeEmissao = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Data de emissão'),
+              ),
+              TextField(
                 onChanged: (value) {
                   setState(() {
                     nomesDeClientes = value;
@@ -160,12 +275,31 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: InputDecoration(labelText: 'Nome do Cliente'),
               ),
               TextField(
+                keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
-                    referentePasseio = value;
+                    qtdInt = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Referente'),
+                decoration: InputDecoration(labelText: 'Qt.Inteira'),
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    qtdMeia = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Qt.Meia'),
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    qtdFree = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Qt.Free'),
               ),
               TextField(
                 onChanged: (value) {
@@ -176,22 +310,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: InputDecoration(labelText: 'Tipo de passeio'),
               ),
               TextField(
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.datetime,
                 onChanged: (value) {
                   setState(() {
-                    valorTotal = value;
+                    dataDePasseio = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Valor total'),
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    valorAReceber = value;
-                  });
-                },
-                decoration: InputDecoration(labelText: 'Valor a receber'),
+                decoration: InputDecoration(labelText: 'Data de passeio'),
               ),
               TextField(
                 keyboardType: TextInputType.number,
@@ -200,25 +325,28 @@ class _MyHomePageState extends State<MyHomePage> {
                     valorPago = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Valor pago'),
+                decoration:
+                    InputDecoration(labelText: 'Valor pago', prefixText: 'R\$'),
               ),
               TextField(
-                keyboardType: TextInputType.datetime,
+                keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
-                    dataDeEmissao = value;
+                    valorAReceber = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Data de emissão'),
+                decoration: InputDecoration(
+                    labelText: 'Valor a receber', prefixText: 'R\$'),
               ),
               TextField(
-                keyboardType: TextInputType.datetime,
+                keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
-                    dataDePasseio = value;
+                    valorTotal = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Data de passeio'),
+                decoration: InputDecoration(
+                    labelText: 'Valor total', prefixText: 'R\$'),
               ),
               SizedBox(height: 20),
               Container(
