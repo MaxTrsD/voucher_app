@@ -13,6 +13,8 @@ class TelaHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color azulFonte = Color.fromARGB(255, 95, 130, 164);
+
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       drawer: Drawer(),
