@@ -17,20 +17,27 @@ class TelaHome extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 60,
+            ),
+            Text('v1.0.01'),
+          ],
+        ),
+      ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.orangeAccent,
         title: Row(
           children: [
             SizedBox(
-              width: 69,
+              width: 66,
             ),
             Text(
               'Paraty Trips',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+              style: TextStyle(color: Colors.white, fontFamily: 'NormalFont'),
             ),
           ],
         ),
@@ -114,7 +121,9 @@ class TelaHome extends StatelessWidget {
                                         ),
                                         Text(
                                           'Voucher',
-                                          style: TextStyle(color: Colors.black),
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'BoldFont'),
                                           textScaler: TextScaler.linear(1.4),
                                         ),
                                       ],
@@ -126,7 +135,9 @@ class TelaHome extends StatelessWidget {
                                         ),
                                         Text(
                                           'Gera um voucher com dados inseridos.',
-                                          style: TextStyle(color: Colors.black),
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'NormalFont'),
                                           textScaler: TextScaler.linear(1.2),
                                         ),
                                       ],
