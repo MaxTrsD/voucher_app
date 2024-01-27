@@ -15,6 +15,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _globalKey = GlobalKey();
 
   String nomesDeClientes = '';
+  String nDeRecibo = '';
   String tipoDePasseio = '';
   String dataDePasseio = '';
   String dataDeEmissao = '';
@@ -22,8 +23,26 @@ class _MyHomePageState extends State<MyHomePage> {
   String valorPago = '';
   String valorAReceber = '';
   String valorTotal = '';
+  Color azulFonte = Color.fromARGB(255, 95, 130, 164);
+
   @override
   Widget build(BuildContext context) {
+    if (tipoDePasseio == '' || tipoDePasseio.isEmpty) {
+      tipoDePasseio = '(Tipo de passeio)';
+    } else {
+      tipoDePasseio = tipoDePasseio;
+    }
+    if (dataDePasseio == '' || dataDePasseio.isEmpty) {
+      dataDePasseio = '(Data)';
+    } else {
+      dataDePasseio = dataDePasseio;
+    }
+    if (nDeRecibo == '' || nDeRecibo.isEmpty) {
+      nDeRecibo = 'Ano.Dia.Mês-ID';
+    } else {
+      nDeRecibo = nDeRecibo;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -52,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     fit: StackFit.expand,
                     children: <Widget>[
                       // Display the base voucher image
-                      Image.asset('assets/images/voucher (5).png',
+                      Image.asset('assets/images/voucher vazio.png',
                           width: 300, height: 200),
                       // Display customer name and payment info
                       Positioned(
@@ -61,7 +80,30 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(
                           nomesDeClientes,
                           style: TextStyle(
-                              color: const ui.Color.fromARGB(255, 0, 0, 0)),
+                              color:
+                                  const ui.Color.fromARGB(255, 95, 130, 164)),
+                        ),
+                      ),
+                      Positioned(
+                        top: 85,
+                        left: 120,
+                        child: Text(
+                          'Referente ao ${tipoDePasseio.toLowerCase()} em $dataDePasseio.',
+                          style: TextStyle(
+                              color: azulFonte,
+                              fontSize: 9,
+                              fontFamily: 'BoldFont'),
+                        ),
+                      ),
+                      Positioned(
+                        top: 21.5,
+                        left: 146,
+                        child: Text(
+                          nDeRecibo,
+                          style: TextStyle(
+                              color: azulFonte,
+                              fontSize: 9,
+                              fontFamily: 'BoldFont'),
                         ),
                       ),
                       Positioned(
@@ -70,7 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(
                           valorPago,
                           style: TextStyle(
-                              color: const ui.Color.fromARGB(255, 0, 0, 0)),
+                              color:
+                                  const ui.Color.fromARGB(255, 95, 130, 164)),
                         ),
                       ),
                       Positioned(
@@ -79,7 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(
                           valorAReceber,
                           style: TextStyle(
-                              color: const ui.Color.fromARGB(255, 0, 0, 0)),
+                              color:
+                                  const ui.Color.fromARGB(255, 95, 130, 164)),
                         ),
                       ),
                       Positioned(
@@ -88,7 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(
                           valorTotal,
                           style: TextStyle(
-                              color: const ui.Color.fromARGB(255, 0, 0, 0)),
+                              color:
+                                  const ui.Color.fromARGB(255, 95, 130, 164)),
                         ),
                       ),
                     ],
@@ -98,6 +143,14 @@ class _MyHomePageState extends State<MyHomePage> {
               Divider(),
               SizedBox(height: 20),
               // TextFields for customer name and payment info
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    nDeRecibo = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Recibo'),
+              ),
               TextField(
                 onChanged: (value) {
                   setState(() {
