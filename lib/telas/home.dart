@@ -29,7 +29,7 @@ class TelaHome extends StatelessWidget {
       ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor: Color.fromARGB(255, 246, 177, 50),
         title: Row(
           children: [
             SizedBox(
@@ -83,9 +83,9 @@ class TelaHome extends StatelessWidget {
                           borderRadius: BorderRadius.circular(57),
                           image: DecorationImage(
                               image: AssetImage(
-                                'assets/images/voucher (5).png',
+                                'assets/images/voucher vazio.png',
                               ),
-                              alignment: Alignment.topLeft),
+                              alignment: Alignment.topCenter),
                         ),
                         child: Stack(
                           children: [
