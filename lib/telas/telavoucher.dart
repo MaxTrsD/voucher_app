@@ -3,9 +3,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -27,66 +32,188 @@ class _MyHomePageState extends State<MyHomePage> {
   String valorAReceber = '';
   String valorTotal = '';
   Color azulFonte = Color.fromARGB(255, 95, 130, 164);
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (tipoDePasseio == '' || tipoDePasseio.isEmpty) {
-      tipoDePasseio = '(Tipo de passeio)';
-    } else {
-      tipoDePasseio = tipoDePasseio;
+    Widget blueBtn(VoidCallback onPressed) {
+      return Container(
+        height: 50,
+        width: 180,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 246, 177, 50),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Center(
+          child: TextButton(
+            onPressed: _saveImage,
+            style:
+                ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(200, 50))),
+            child: Text(
+              'Salvar Imagem',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      );
     }
 
-    if (dataDePasseio == '' || dataDePasseio.isEmpty) {
-      dataDePasseio = '(Data)';
-    } else {
-      dataDePasseio = dataDePasseio;
+    Widget greyBtn(VoidCallback onPressed) {
+      return Container(
+        height: 50,
+        width: 180,
+        decoration: BoxDecoration(
+          color: ui.Color.fromARGB(99, 27, 27, 57),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Center(
+          child: TextButton(
+            onPressed: () {},
+            style:
+                ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(200, 50))),
+            child: Text(
+              'Salvar Imagem',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      );
     }
-    if (nDeRecibo == '' || nDeRecibo.isEmpty) {
-      nDeRecibo = 'Ano.Dia.Mês-ID';
-    } else {
-      nDeRecibo = nDeRecibo;
+
+    clearFields() {
+      setState(
+        () {
+          // Limpar os campos de string
+          nomesDeClientes = '';
+          qtdInt = '0';
+          qtdMeia = '0';
+          qtdFree = '0';
+          nDeRecibo = '';
+          tipoDePasseio = '';
+          dataDePasseio = '';
+          dataDeEmissao = '';
+          valorPago = '';
+          valorAReceber = '';
+          valorTotal = '';
+        },
+      );
     }
-    if (valorTotal == '' || valorTotal.isEmpty) {
-      valorTotal = '0,00';
-    } else {
-      valorTotal = valorTotal;
+
+    Widget clearBtn(VoidCallback onPressed) {
+      return Container(
+        height: 50,
+        width: 180,
+        decoration: BoxDecoration(
+          color: ui.Color.fromARGB(255, 110, 110, 110),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Center(
+          child: TextButton(
+            onPressed: clearFields,
+            style:
+                ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(200, 50))),
+            child: Text(
+              'Limpar Voucher',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      );
     }
-    if (valorPago == '' || valorPago.isEmpty) {
-      valorPago = '0,00';
-    } else {
-      valorPago = valorPago;
+
+    String getMonthName(String dateString) {
+      List<String> parts = dateString.split('/');
+
+      if (parts.length != 3) {
+        return '(Mês)';
+      }
+
+      int month = int.tryParse(parts[1]) ?? 0;
+      switch (month) {
+        case 01:
+          return 'Janeiro';
+        case 02:
+          return 'Fevereiro';
+        case 03:
+          return 'Março';
+        case 04:
+          return 'Abril';
+        case 05:
+          return 'Maio';
+        case 06:
+          return 'Junho';
+        case 07:
+          return 'Julho';
+        case 08:
+          return 'Agosto';
+        case 09:
+          return 'Setembro';
+        case 10:
+          return 'Outubro';
+        case 11:
+          return 'Novembro';
+        case 12:
+          return 'Dezembro';
+        default:
+          return '(Mês)';
+      }
     }
-    if (valorAReceber == '' || valorAReceber.isEmpty) {
-      valorAReceber = '0,00';
-    } else {
-      valorAReceber = valorAReceber;
+
+    String getDay(String dateString) {
+      // Separar a string em partes (dia, mês, ano)
+      List<String> parts = dateString.split('/');
+
+      if (parts.length != 3) {
+        return '(Dia)';
+      }
+
+      return parts[0];
     }
-    if (qtdInt == '' || qtdInt.isEmpty) {
-      qtdInt = '0';
-    } else {
-      qtdInt = qtdInt;
-    }
-    if (qtdMeia == '' || qtdMeia.isEmpty) {
-      qtdMeia = '0';
-    } else {
-      qtdMeia = qtdMeia;
-    }
-    if (qtdFree == '' || qtdFree.isEmpty) {
-      qtdFree = '0';
-    } else {
-      qtdFree = qtdFree;
+
+    String getYear(String dateString) {
+      // Separar a string em partes (dia, mês, ano)
+      List<String> parts = dateString.split('/');
+
+      if (parts.length != 3) {
+        return '(Ano)';
+      }
+
+      return parts[2];
     }
 
     String valorTt = ' R\$$valorTotal';
     String valorAR = ' R\$$valorAReceber';
     String valorPg = ' R\$$valorPago';
-    String referentePasseio = tipoDePasseio;
+
+    Widget getButtonBasedOnEmptyFields() {
+      // Verificar se algum dos campos está vazio
+      if (nDeRecibo.isEmpty ||
+          tipoDePasseio.isEmpty ||
+          dataDePasseio.isEmpty ||
+          dataDeEmissao.isEmpty ||
+          valorPago.isEmpty ||
+          valorAReceber.isEmpty ||
+          valorTotal.isEmpty) {
+        // Se algum campo estiver vazio, retornar o botão cinza
+
+        return greyBtn(() {});
+      } else {
+        // Caso contrário, retornar o botão azul
+        return blueBtn(_saveImage);
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor: Color.fromARGB(255, 246, 177, 50),
         title: Text(
           'Voucher',
           style: TextStyle(color: Colors.white, fontFamily: 'NormalFont'),
@@ -102,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 key: _globalKey,
                 child: Container(
                   width: 400,
-                  height: 179,
+                  height: 176.6,
                   color: ui.Color.fromARGB(0, 0, 0, 0),
                   child: Stack(
                     fit: StackFit.expand,
@@ -112,13 +239,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: 300, height: 200),
                       // Display customer name and payment info
                       Positioned(
-                        top: 90,
-                        left: 40,
+                        top: 35,
+                        left: 140,
                         child: Text(
                           nomesDeClientes,
                           style: TextStyle(
-                              color:
-                                  const ui.Color.fromARGB(255, 95, 130, 164)),
+                              color: const ui.Color.fromARGB(255, 95, 130, 164),
+                              fontFamily: 'BoldFont',
+                              fontSize: 6),
                         ),
                       ),
                       Positioned(
@@ -133,29 +261,29 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 119,
-                        left: 150,
+                        top: 118,
+                        left: 148,
                         child: Text(
-                          'Paraty, $dataDeEmissao.',
+                          'Paraty, ${getDay(dataDeEmissao)} de ${getMonthName(dataDeEmissao)} de ${getYear(dataDeEmissao)}.',
                           style: TextStyle(
-                              color: ui.Color.fromARGB(255, 0, 0, 0),
+                              color: ui.Color.fromARGB(255, 59, 59, 59),
                               fontSize: 8,
                               fontFamily: 'NormalFont'),
                         ),
                       ),
                       Positioned(
-                        top: 85,
-                        left: 120,
+                        top: 83,
+                        left: 116,
                         child: Text(
-                          'Referente ao ${tipoDePasseio.toLowerCase()} em $dataDePasseio.',
+                          'Referente ao ${tipoDePasseio.toLowerCase()} em ${getDay(dataDePasseio)} de ${getMonthName(dataDePasseio)} de ${getYear(dataDePasseio)}.',
                           style: TextStyle(
                               color: azulFonte,
-                              fontSize: 9,
+                              fontSize: 8,
                               fontFamily: 'BoldFont'),
                         ),
                       ),
                       Positioned(
-                        top: 21.5,
+                        top: 20.9,
                         left: 146,
                         child: Text(
                           nDeRecibo,
@@ -166,7 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 15,
+                        top: 14,
                         left: 20,
                         child: Text(
                           valorTt,
@@ -177,7 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 41.3,
+                        top: 41.0,
                         left: 16,
                         child: Text(
                           qtdInt,
@@ -188,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 51.2,
+                        top: 50.9,
                         left: 16,
                         child: Text(
                           qtdMeia,
@@ -199,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 61.5,
+                        top: 61.2,
                         left: 16,
                         child: Text(
                           qtdFree,
@@ -221,7 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 22,
+                        top: 21,
                         left: 330,
                         child: Text(
                           valorAR,
@@ -232,7 +360,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 9.5,
+                        top: 8.4,
                         left: 330,
                         child: Text(
                           valorPg,
@@ -255,7 +383,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     nDeRecibo = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Recibo'),
+                decoration: InputDecoration(
+                    labelText: 'Recibo',
+                    prefixText: 'Nº',
+                    hintText: '2024.31.12-0'),
               ),
               TextField(
                 keyboardType: TextInputType.datetime,
@@ -264,18 +395,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     dataDeEmissao = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Data de emissão'),
+                decoration: InputDecoration(
+                    labelText: 'Data de emissão', hintText: '31/12/2024'),
               ),
-              TextField(
+              TextFormField(
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                maxLines: null,
+                controller: _controller,
                 onChanged: (value) {
                   setState(() {
                     nomesDeClientes = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Nome do Cliente'),
+                decoration: InputDecoration(labelText: 'Nomes de Clientes'),
               ),
               TextField(
                 keyboardType: TextInputType.number,
+                inputFormatters: [LengthLimitingTextInputFormatter(2)],
                 onChanged: (value) {
                   setState(() {
                     qtdInt = value;
@@ -285,6 +422,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               TextField(
                 keyboardType: TextInputType.number,
+                inputFormatters: [LengthLimitingTextInputFormatter(2)],
                 onChanged: (value) {
                   setState(() {
                     qtdMeia = value;
@@ -294,6 +432,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               TextField(
                 keyboardType: TextInputType.number,
+                inputFormatters: [LengthLimitingTextInputFormatter(2)],
                 onChanged: (value) {
                   setState(() {
                     qtdFree = value;
@@ -316,54 +455,56 @@ class _MyHomePageState extends State<MyHomePage> {
                     dataDePasseio = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Data de passeio'),
+                decoration: InputDecoration(
+                    labelText: 'Data de passeio', hintText: '31/12/2024'),
               ),
               TextField(
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) {
                   setState(() {
                     valorPago = value;
                   });
                 },
-                decoration:
-                    InputDecoration(labelText: 'Valor pago', prefixText: 'R\$'),
+                decoration: InputDecoration(
+                    labelText: 'Valor pago',
+                    prefixText: 'R\$',
+                    hintText: '0,00'),
               ),
               TextField(
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) {
                   setState(() {
                     valorAReceber = value;
                   });
                 },
-                decoration: InputDecoration(
-                    labelText: 'Valor a receber', prefixText: 'R\$'),
+                decoration: const InputDecoration(
+                    labelText: 'Valor a receber',
+                    prefixText: 'R\$',
+                    hintText: '0,00'),
               ),
               TextField(
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) {
                   setState(() {
                     valorTotal = value;
                   });
                 },
                 decoration: InputDecoration(
-                    labelText: 'Valor total', prefixText: 'R\$'),
+                    labelText: 'Valor total',
+                    prefixText: 'R\$',
+                    hintText: '0,00'),
               ),
               SizedBox(height: 20),
-              Container(
-                height: 50,
-                width: 200,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 27, 27, 57),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Center(
-                  child: TextButton(
-                    onPressed: _saveImage,
-                    child: Text(
-                      'Salvar Imagem',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    clearBtn(() {}),
+                    SizedBox(width: 5),
+                    getButtonBasedOnEmptyFields(),
+                  ],
                 ),
               ),
               SizedBox(
@@ -397,6 +538,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _saveImageInternal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Obtenha o último número progressivo salvo, padrão para 1 se não existir
+    int lastProgressiveNumber = prefs.getInt('progressiveNumber') ?? 1;
+
+    // Atualize o número progressivo para o próximo valor
+    int nextProgressiveNumber = lastProgressiveNumber + 1;
+    prefs.setInt('progressiveNumber', nextProgressiveNumber);
+
+    // Defina o nome do arquivo usando as informações disponíveis e o número progressivo
+    String fileName =
+        '${dataDeEmissao}_${tipoDePasseio}_${nDeRecibo}_$nextProgressiveNumber.png';
+
     RenderRepaintBoundary boundary =
         _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage(pixelRatio: 10.0);
@@ -405,27 +559,38 @@ class _MyHomePageState extends State<MyHomePage> {
     if (byteData != null) {
       Uint8List pngBytes = byteData.buffer.asUint8List();
       ui.Codec codec = await ui.instantiateImageCodec(pngBytes,
-          targetHeight: 900, targetWidth: 2000);
+          targetHeight: 950, targetWidth: 2000);
       ui.FrameInfo frameInfo = await codec.getNextFrame();
       ui.Image resizedImage = frameInfo.image;
 
-      // Save the resized image to the gallery
-      Uint8List resizedBytes =
-          (await resizedImage.toByteData(format: ui.ImageByteFormat.png))!
-              .buffer
-              .asUint8List();
-      await ImageGallerySaver.saveImage(resizedBytes);
+      // Defina o diretório de destino
+      String directoryPath = '/data/user/0/com.example.voucher_app/app_flutter';
+      Directory directory = Directory(directoryPath);
+      if (!await directory.exists()) {
+        directory.createSync(recursive: true);
+      }
+
+      // Salve a imagem no diretório específico
+      String imagePath = '$directoryPath/$fileName';
+      File imageFile = File(imagePath);
+      await imageFile.writeAsBytes(pngBytes);
 
       // Exibir a SnackBar após salvar a imagem
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
-          content: Text('Imagem salva com sucesso!'),
+          content: Text('Imagem salva com sucesso como $fileName'),
           duration: Duration(seconds: 2),
         ),
       );
     } else {
-      print("Failed to convert image to ByteData");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
+          content: Text('Erro ao salvar imagem!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }
