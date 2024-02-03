@@ -53,7 +53,7 @@ class _LoggVoucherState extends State<LoggVoucher> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search PNG files...',
+                hintText: 'Pesquisar Vouchers...',
               ),
               onChanged: (value) {
                 String query = value.toLowerCase();
