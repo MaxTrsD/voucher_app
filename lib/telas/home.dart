@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:voucher_app/telas/logVoucher.dart';
 import 'package:voucher_app/telas/telavoucher.dart';
 
 class TelaHome extends StatelessWidget {
@@ -18,12 +19,36 @@ class TelaHome extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       drawer: Drawer(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 60,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 246, 177, 50),
+              ),
+              child: Text(
+                'Paraty Trips',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
             ),
-            Text('v1.0.01'),
+            ListTile(
+              title: Text('Voucher Log'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoggVoucher(),
+                  ),
+                );
+
+                // Implemente aqui o que deseja fazer quando clicar no item 1
+              },
+            ),
+
+            // Adicione mais ListTile conforme necessário
           ],
         ),
       ),

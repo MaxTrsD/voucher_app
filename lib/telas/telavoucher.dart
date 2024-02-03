@@ -8,6 +8,9 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -187,7 +190,6 @@ class _MyHomePageState extends State<MyHomePage> {
     String valorTt = ' R\$$valorTotal';
     String valorAR = ' R\$$valorAReceber';
     String valorPg = ' R\$$valorPago';
-    String referentePasseio = tipoDePasseio;
 
     Widget getButtonBasedOnEmptyFields() {
       // Verificar se algum dos campos está vazio
@@ -536,6 +538,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _saveImageInternal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Obtenha o último número progressivo salvo, padrão para 1 se não existir
+    int lastProgressiveNumber = prefs.getInt('progressiveNumber') ?? 1;
+
+    // Atualize o número progressivo para o próximo valor
+    int nextProgressiveNumber = lastProgressiveNumber + 1;
+    prefs.setInt('progressiveNumber', nextProgressiveNumber);
+
+    // Defina o nome do arquivo usando as informações disponíveis e o número progressivo
+    String fileName =
+        '${dataDeEmissao}_${tipoDePasseio}_${nDeRecibo}_$nextProgressiveNumber.png';
+
     RenderRepaintBoundary boundary =
         _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage(pixelRatio: 10.0);
@@ -548,23 +563,34 @@ class _MyHomePageState extends State<MyHomePage> {
       ui.FrameInfo frameInfo = await codec.getNextFrame();
       ui.Image resizedImage = frameInfo.image;
 
-      // Save the resized image to the gallery
-      Uint8List resizedBytes =
-          (await resizedImage.toByteData(format: ui.ImageByteFormat.png))!
-              .buffer
-              .asUint8List();
-      await ImageGallerySaver.saveImage(resizedBytes);
+      // Defina o diretório de destino
+      String directoryPath = '/data/user/0/com.example.voucher_app/app_flutter';
+      Directory directory = Directory(directoryPath);
+      if (!await directory.exists()) {
+        directory.createSync(recursive: true);
+      }
+
+      // Salve a imagem no diretório específico
+      String imagePath = '$directoryPath/$fileName';
+      File imageFile = File(imagePath);
+      await imageFile.writeAsBytes(pngBytes);
 
       // Exibir a SnackBar após salvar a imagem
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
-          content: Text('Imagem salva com sucesso!'),
+          content: Text('Imagem salva com sucesso como $fileName'),
           duration: Duration(seconds: 2),
         ),
       );
     } else {
-      print("Failed to convert image to ByteData");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
+          content: Text('Erro ao salvar imagem!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }
