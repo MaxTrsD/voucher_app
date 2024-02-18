@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "128359113676",
+    "project_id": "paraty-trips-app",
+    "storage_bucket": "paraty-trips-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128359113676:android:2869932e8d9bd2bce2b369",
+        "android_client_info": {
+          "package_name": "com.example.voucher_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkMv_SebB1T0tmOaAScZMgGfbA4vKgM8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
