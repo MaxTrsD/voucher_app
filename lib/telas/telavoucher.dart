@@ -17,6 +17,60 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+class CustomNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final StringBuffer newText = StringBuffer();
+    final String strippedValue = newValue.text.replaceAll(
+        RegExp(r'\D'), ''); // Remove todos os caracteres não numéricos
+    int count = 0;
+
+    for (int i = 0; i < strippedValue.length; i++) {
+      if (count == 4 || count == 7) {
+        newText.write('.'); // Adiciona um ponto
+        count++;
+      }
+      if (count == 10) {
+        newText.write('-'); // Adiciona um traço
+        count++;
+      }
+      newText.write(strippedValue[i]);
+      count++;
+    }
+
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
+class CustomDateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final StringBuffer newText = StringBuffer();
+    final String strippedValue = newValue.text.replaceAll(
+        RegExp(r'\D'), ''); // Remove todos os caracteres não numéricos
+    int count = 0;
+
+    for (int i = 0; i < strippedValue.length; i++) {
+      if (count == 2 || count == 5) {
+        newText.write('/'); // Adiciona uma barra
+        count++;
+      }
+      newText.write(strippedValue[i]);
+      count++;
+    }
+
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _globalKey = GlobalKey();
 
@@ -377,18 +431,27 @@ class _MyHomePageState extends State<MyHomePage> {
               Divider(),
               SizedBox(height: 20),
               // TextFields for customer name and payment info
-              TextField(
+              TextFormField(
                 onChanged: (value) {
                   setState(() {
                     nDeRecibo = value;
                   });
                 },
+                inputFormatters: [
+                  CustomNumberInputFormatter(),
+                  LengthLimitingTextInputFormatter(13)
+                ],
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     labelText: 'Recibo',
                     prefixText: 'Nº',
-                    hintText: '2024.31.12-0'),
+                    hintText: 'Ano.Dia.Mês-ID'),
               ),
               TextField(
+                inputFormatters: [
+                  CustomDateInputFormatter(),
+                  LengthLimitingTextInputFormatter(10)
+                ],
                 keyboardType: TextInputType.datetime,
                 onChanged: (value) {
                   setState(() {
@@ -449,6 +512,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: InputDecoration(labelText: 'Tipo de passeio'),
               ),
               TextField(
+                inputFormatters: [
+                  CustomDateInputFormatter(),
+                  LengthLimitingTextInputFormatter(10)
+                ],
                 keyboardType: TextInputType.datetime,
                 onChanged: (value) {
                   setState(() {
@@ -563,34 +630,39 @@ class _MyHomePageState extends State<MyHomePage> {
       ui.FrameInfo frameInfo = await codec.getNextFrame();
       ui.Image resizedImage = frameInfo.image;
 
-      // Defina o diretório de destino
+      // Save the resized image to the gallery with the custom file name
+      Uint8List resizedBytes =
+          (await resizedImage.toByteData(format: ui.ImageByteFormat.png))!
+              .buffer
+              .asUint8List();
+      await ImageGallerySaver.saveImage(resizedBytes, name: fileName);
+
       String directoryPath = '/data/user/0/com.example.voucher_app/app_flutter';
       Directory directory = Directory(directoryPath);
       if (!await directory.exists()) {
         directory.createSync(recursive: true);
+
+        // Salve a imagem no diretório específico
+        String imagePath = '$directoryPath/$fileName';
+        File(imagePath).writeAsBytesSync(pngBytes);
+
+        // Exibir a SnackBar após salvar a imagem
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
+            content: Text('Imagem salva com sucesso como $fileName'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
+            content: Text('Erro ao salvar imagem!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
-
-      // Salve a imagem no diretório específico
-      String imagePath = '$directoryPath/$fileName';
-      File imageFile = File(imagePath);
-      await imageFile.writeAsBytes(pngBytes);
-
-      // Exibir a SnackBar após salvar a imagem
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
-          content: Text('Imagem salva com sucesso como $fileName'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
-          content: Text('Erro ao salvar imagem!'),
-          duration: Duration(seconds: 2),
-        ),
-      );
     }
   }
 }

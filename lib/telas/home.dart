@@ -31,11 +31,14 @@ class TelaHome extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
+                  fontFamily: 'NormalFont',
                 ),
               ),
             ),
+
             ListTile(
-              title: Text('Voucher Log'),
+              title: Text('Voucher Log',
+                  style: TextStyle(fontFamily: 'NormalFont')),
               onTap: () {
                 Navigator.push(
                   context,
@@ -43,11 +46,10 @@ class TelaHome extends StatelessWidget {
                     builder: (context) => LoggVoucher(),
                   ),
                 );
-
                 // Implemente aqui o que deseja fazer quando clicar no item 1
               },
             ),
-
+            Divider(height: 0),
             // Adicione mais ListTile conforme necessário
           ],
         ),
