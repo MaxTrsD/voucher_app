@@ -641,28 +641,27 @@ class _MyHomePageState extends State<MyHomePage> {
       Directory directory = Directory(directoryPath);
       if (!await directory.exists()) {
         directory.createSync(recursive: true);
-
-        // Salve a imagem no diretório específico
-        String imagePath = '$directoryPath/$fileName';
-        File(imagePath).writeAsBytesSync(pngBytes);
-
-        // Exibir a SnackBar após salvar a imagem
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
-            content: Text('Imagem salva com sucesso como $fileName'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
-            content: Text('Erro ao salvar imagem!'),
-            duration: Duration(seconds: 2),
-          ),
-        );
       }
+      // Salve a imagem no diretório específico
+      String imagePath = '$directoryPath/$fileName';
+      File(imagePath).writeAsBytesSync(pngBytes);
+
+      // Exibir a SnackBar após salvar a imagem
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
+          content: Text('Imagem salva com sucesso como $fileName'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
+          content: Text('Erro ao salvar imagem!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }
