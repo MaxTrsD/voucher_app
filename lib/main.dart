@@ -1,15 +1,19 @@
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:voucher_app/firebase_options.dart';
 import 'package:voucher_app/telas/home.dart';
-import 'package:voucher_app/telas/telavoucher.dart';
-import '';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp(
+      options: DefaultFirebaseOptions
+          .currentPlatform); // Inicialize o Firebase antes de executar o app
+  runApp(MyApp());
+}
+
+final firebaseApp = Firebase.app();
+FirebaseDatabase database = FirebaseDatabase.instance;
 
 class MyApp extends StatelessWidget {
   @override

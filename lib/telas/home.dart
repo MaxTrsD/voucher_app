@@ -37,7 +37,7 @@ class TelaHome extends StatelessWidget {
             ),
 
             ListTile(
-              title: Text('Voucher Log',
+              title: Text('Local V Log',
                   style: TextStyle(fontFamily: 'NormalFont')),
               onTap: () {
                 Navigator.push(
@@ -51,6 +51,11 @@ class TelaHome extends StatelessWidget {
             ),
             Divider(height: 0),
             // Adicione mais ListTile conforme necessário
+            ListTile(
+              title: Text('Voucher DB Log',
+                  style: TextStyle(fontFamily: 'NormalFont')),
+              onTap: () {},
+            ),
           ],
         ),
       ),

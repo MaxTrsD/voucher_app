@@ -174,18 +174,23 @@ class _LoggVoucherState extends State<LoggVoucher> {
                                             children: [
                                               Center(
                                                 child: TextButton(
-                                                    style: ButtonStyle(
-                                                        fixedSize:
-                                                            MaterialStatePropertyAll(
-                                                                Size(
-                                                                    200, 100))),
-                                                    onPressed: clearB,
-                                                    child: Text(
-                                                      'Confirmar!',
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 28),
-                                                    )),
+                                                  style: ButtonStyle(
+                                                    fixedSize:
+                                                        MaterialStatePropertyAll(
+                                                      Size(200, 100),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    clearB();
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    'Confirmar!',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 28),
+                                                  ),
+                                                ),
                                               )
                                             ],
                                           ),
