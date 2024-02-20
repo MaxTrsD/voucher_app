@@ -37,7 +37,7 @@ class TelaHome extends StatelessWidget {
             ),
 
             ListTile(
-              title: Text('Local V Log',
+              title: Text('Local Voucher Log',
                   style: TextStyle(fontFamily: 'NormalFont')),
               onTap: () {
                 Navigator.push(
