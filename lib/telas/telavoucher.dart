@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -11,6 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'dart:math';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -94,6 +98,19 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  Future<bool> _saveImage2() async {
+    // Lógica para salvar a imagem aqui
+    // Retorne true se a imagem for salva com sucesso, caso contrário, retorne false
+    return true; // Exemplo: retornando true para simular sucesso
+  }
+
+  String generateUuid() {
+    final random = Random();
+    final int1 = random.nextInt(4294967296); // 2^32
+    final int2 = random.nextInt(4294967296);
+    return '${int1.toRadixString(16).padLeft(8, '0')}-${int2.toRadixString(16).padLeft(8, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget blueBtn(VoidCallback onPressed) {
@@ -106,7 +123,33 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: Center(
           child: TextButton(
-            onPressed: _saveImage,
+            onPressed: () async {
+              DatabaseReference hey =
+                  FirebaseDatabase.instance.ref().child("Gen Vouchers/Voucher");
+              _saveImage();
+              DatabaseReference nehey = hey.push();
+
+              await nehey.set(
+                {
+                  "Nº Voucher": "Nº$nDeRecibo",
+                  "Nº ID": "Nº${generateUuid()}",
+                  "Data Ems": "$dataDeEmissao",
+                  "Data Passeio": "$dataDePasseio",
+                  "Qtd Int": "${qtdInt ?? '0'}",
+                  "Qtd M": "${qtdMeia ?? '0'}",
+                  "Qtd F": "${qtdFree ?? '0'}",
+                  "Tipo Passeio": "${tipoDePasseio.toLowerCase()}",
+                  "Valor pago": "$valorPago",
+                  "Valor a receber": "$valorAReceber",
+                  "Valor total": "$valorTotal",
+                  "Timestamp": "${DateTime.now()}",
+                },
+              ).then((_) {
+                print('Novo item adicionado com sucesso.');
+              }).catchError((error) {
+                print('Erro ao adicionar novo item: $error');
+              });
+            },
             style:
                 ButtonStyle(fixedSize: MaterialStatePropertyAll(Size(200, 50))),
             child: Text(
@@ -459,7 +502,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
                 decoration: InputDecoration(
-                    labelText: 'Data de emissão', hintText: '31/12/2024'),
+                  labelText: 'Data de emissão',
+                  hintText: '31/12/2024',
+                ),
               ),
               TextFormField(
                 keyboardType: TextInputType.multiline,
@@ -584,6 +629,17 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _handleSaveImage() async {
+    bool success = await _saveImage2();
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Imagem salva com sucesso!'),
+        ),
+      );
+    }
+  }
+
   void _saveImage() async {
     // Verificar se a permissão já foi concedida
     Permission.storage.request();
@@ -602,6 +658,7 @@ class _MyHomePageState extends State<MyHomePage> {
         print('Permissão de armazenamento negada pelo usuário. $status');
       }
     }
+    _saveImage2();
   }
 
   void _saveImageInternal() async {
@@ -641,28 +698,27 @@ class _MyHomePageState extends State<MyHomePage> {
       Directory directory = Directory(directoryPath);
       if (!await directory.exists()) {
         directory.createSync(recursive: true);
-
-        // Salve a imagem no diretório específico
-        String imagePath = '$directoryPath/$fileName';
-        File(imagePath).writeAsBytesSync(pngBytes);
-
-        // Exibir a SnackBar após salvar a imagem
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
-            content: Text('Imagem salva com sucesso como $fileName'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
-            content: Text('Erro ao salvar imagem!'),
-            duration: Duration(seconds: 2),
-          ),
-        );
       }
+      // Salve a imagem no diretório específico
+      String imagePath = '$directoryPath/$fileName';
+      File(imagePath).writeAsBytesSync(pngBytes);
+
+      // Exibir a SnackBar após salvar a imagem
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: ui.Color.fromARGB(255, 27, 27, 57),
+          content: Text('Imagem salva com sucesso como $fileName'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: ui.Color.fromARGB(255, 255, 0, 0),
+          content: Text('Erro ao salvar imagem!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }
