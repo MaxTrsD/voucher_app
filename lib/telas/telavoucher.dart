@@ -629,17 +629,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _handleSaveImage() async {
-    bool success = await _saveImage2();
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Imagem salva com sucesso!'),
-        ),
-      );
-    }
-  }
-
   void _saveImage() async {
     // Verificar se a permissão já foi concedida
     Permission.storage.request();
